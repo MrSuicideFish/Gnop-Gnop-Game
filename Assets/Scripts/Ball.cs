@@ -1,15 +1,30 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Ball : MonoBehaviour {
+public class Ball : MonoBehaviour
+{
+    private static Ball CurrentBall;
+    public float BallLaunchPower = 3.0f;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    public Rigidbody2D RigidBodyComponent;
+
+    void Start( )
+    {
+        CurrentBall = this;
+        RigidBodyComponent = GetComponent<Rigidbody2D>( );
+
+        //Listen for new gamestate
+        GameManager.OnGameStateChanged += OnGameStateChanged;
+    }
+
+    void OnGameStateChanged(GameManager.eGameState newGameState )
+    {
+        if(newGameState == GameManager.eGameState.Playing )
+        {
+            Quaternion direction = Quaternion.Euler( (float)Random.Range( 0, 300 ), ( float )Random.Range( 0, 300 ), ( float )Random.Range( 0, 300 ) );
+
+            //Launch in random direction
+            RigidBodyComponent.AddForce( direction.eulerAngles * BallLaunchPower );
+        }
+    }
 }
